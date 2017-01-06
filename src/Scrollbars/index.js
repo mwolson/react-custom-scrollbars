@@ -10,9 +10,13 @@ import getInnerWidth from '../utils/getInnerWidth';
 import getInnerHeight from '../utils/getInnerHeight';
 
 import {
+    scrollbarSize,
     containerStyleDefault,
     containerStyleAutoHeight,
     viewStyleDefault,
+    viewWrapperStyleDefault,
+    viewWrapperStyleAutoHeight,
+    viewWrappedStyleDefault,
     viewStyleAutoHeight,
     viewStyleUniversalInitial,
     trackHorizontalStyleDefault,
@@ -106,33 +110,46 @@ export default class Scrollbars extends Component {
 
     getScrollWidth() {
         if (!this.view) return 0;
-        return this.view.scrollWidth;
+        return this.view.scrollWidth - this.getPaddingWidth();
     }
 
     getScrollHeight() {
         if (!this.view) return 0;
-        return this.view.scrollHeight;
+        return this.view.scrollHeight - this.getPaddingHeight();
     }
 
     getClientWidth() {
         if (!this.view) return 0;
-        return this.view.clientWidth;
+        return this.view.clientWidth - this.getPaddingWidth();
     }
 
     getClientHeight() {
         if (!this.view) return 0;
-        return this.view.clientHeight;
+        return this.view.clientHeight - this.getPaddingHeight();
     }
+
+    getPaddingWidth() {
+        return scrollbarSize;
+    },
+
+    getPaddingHeight() {
+        return scrollbarSize;
+    },
 
     getValues() {
         const {
             scrollLeft = 0,
             scrollTop = 0,
-            scrollWidth = 0,
-            scrollHeight = 0,
-            clientWidth = 0,
-            clientHeight = 0
+            scrollWidth: realScrollWidth = 0,
+            scrollHeight: realScrollHeight = 0,
+            clientWidth: realClientWidth = 0,
+            clientHeight: realClientHeight = 0
         } = this.view || {};
+
+        const scrollWidth = realScrollWidth - this.getPaddingWidth();
+        const scrollHeight = realScrollHeight - this.getPaddingHeight();
+        const clientWidth = realClientWidth - this.getPaddingWidth();
+        const clientHeight = realClientHeight - this.getPaddingHeight();
 
         return {
             left: (scrollLeft / (scrollWidth - clientWidth)) || 0,
@@ -148,33 +165,41 @@ export default class Scrollbars extends Component {
 
     getThumbHorizontalWidth() {
         const { thumbSize, thumbMinSize } = this.props;
-        const { scrollWidth, clientWidth } = this.view;
+        const { scrollWidth: realScrollWidth, clientWidth: realClientWidth } = this.view;
+        const scrollWidth = realScrollWidth - this.getPaddingWidth();
+        const clientWidth = realClientWidth - this.getPaddingWidth();
         const trackWidth = getInnerWidth(this.trackHorizontal);
         const width = Math.ceil(clientWidth / scrollWidth * trackWidth);
-        if (trackWidth === width) return 0;
+        if (scrollWidth <= clientWidth) return 0;
         if (thumbSize) return thumbSize;
         return Math.max(width, thumbMinSize);
     }
 
     getThumbVerticalHeight() {
         const { thumbSize, thumbMinSize } = this.props;
-        const { scrollHeight, clientHeight } = this.view;
+        const { scrollHeight: realScrollHeight, clientHeight: realClientHeight } = this.view;
+        const scrollHeight = realScrollHeight - this.getPaddingHeight();
+        const clientHeight = realClientHeight - this.getPaddingHeight();
         const trackHeight = getInnerHeight(this.trackVertical);
         const height = Math.ceil(clientHeight / scrollHeight * trackHeight);
-        if (trackHeight === height) return 0;
+        if (scrollHeight <= clientHeight) return 0;
         if (thumbSize) return thumbSize;
         return Math.max(height, thumbMinSize);
     }
 
     getScrollLeftForOffset(offset) {
-        const { scrollWidth, clientWidth } = this.view;
+        const { scrollWidth: realScrollWidth, clientWidth: realClientWidth } = this.view;
+        const scrollWidth = realScrollWidth - this.getPaddingWidth();
+        const clientWidth = realClientWidth - this.getPaddingWidth();
         const trackWidth = getInnerWidth(this.trackHorizontal);
         const thumbWidth = this.getThumbHorizontalWidth();
         return offset / (trackWidth - thumbWidth) * (scrollWidth - clientWidth);
     }
 
     getScrollTopForOffset(offset) {
-        const { scrollHeight, clientHeight } = this.view;
+        const { scrollHeight: realScrollHeight, clientHeight: realClientHeight } = this.view;
+        const scrollHeight = realScrollHeight - this.getPaddingHeight();
+        const clientHeight = realClientHeight - this.getPaddingHeight();
         const trackHeight = getInnerHeight(this.trackVertical);
         const thumbHeight = this.getThumbVerticalHeight();
         return offset / (trackHeight - thumbHeight) * (scrollHeight - clientHeight);
@@ -202,12 +227,12 @@ export default class Scrollbars extends Component {
 
     scrollToRight() {
         if (!this.view) return;
-        this.view.scrollLeft = this.view.scrollWidth;
+        this.view.scrollLeft = this.view.scrollWidth - this.getPaddingWidth();
     }
 
     scrollToBottom() {
         if (!this.view) return;
-        this.view.scrollTop = this.view.scrollHeight;
+        this.view.scrollTop = this.view.scrollHeight - this.getPaddingHeight();
     }
 
     addListeners() {
@@ -215,7 +240,6 @@ export default class Scrollbars extends Component {
         if (typeof document === 'undefined' || !this.view) return;
         const { view, trackHorizontal, trackVertical, thumbHorizontal, thumbVertical } = this;
         view.addEventListener('scroll', this.handleScroll);
-        if (!getScrollbarWidth()) return;
         trackHorizontal.addEventListener('mouseenter', this.handleTrackMouseEnter);
         trackHorizontal.addEventListener('mouseleave', this.handleTrackMouseLeave);
         trackHorizontal.addEventListener('mousedown', this.handleHorizontalTrackMouseDown);
@@ -232,7 +256,6 @@ export default class Scrollbars extends Component {
         if (typeof document === 'undefined' || !this.view) return;
         const { view, trackHorizontal, trackVertical, thumbHorizontal, thumbVertical } = this;
         view.removeEventListener('scroll', this.handleScroll);
-        if (!getScrollbarWidth()) return;
         trackHorizontal.removeEventListener('mouseenter', this.handleTrackMouseEnter);
         trackHorizontal.removeEventListener('mouseleave', this.handleTrackMouseLeave);
         trackHorizontal.removeEventListener('mousedown', this.handleHorizontalTrackMouseDown);
@@ -445,37 +468,37 @@ export default class Scrollbars extends Component {
 
     _update(callback) {
         const { onUpdate, hideTracksWhenNotNeeded } = this.props;
+        this.container.scrollTop = 0;
+        this.container.scrollLeft = 0;
         const values = this.getValues();
-        if (getScrollbarWidth()) {
-            const { scrollLeft, clientWidth, scrollWidth } = values;
-            const trackHorizontalWidth = getInnerWidth(this.trackHorizontal);
-            const thumbHorizontalWidth = this.getThumbHorizontalWidth();
-            const thumbHorizontalX = scrollLeft / (scrollWidth - clientWidth) * (trackHorizontalWidth - thumbHorizontalWidth);
-            const thumbHorizontalStyle = {
-                width: thumbHorizontalWidth,
-                transform: `translateX(${thumbHorizontalX}px)`
+        const { scrollLeft, clientWidth, scrollWidth } = values;
+        const trackHorizontalWidth = getInnerWidth(this.trackHorizontal);
+        const thumbHorizontalWidth = this.getThumbHorizontalWidth();
+        const thumbHorizontalX = scrollLeft / (scrollWidth - clientWidth) * (trackHorizontalWidth - thumbHorizontalWidth);
+        const thumbHorizontalStyle = {
+            width: thumbHorizontalWidth,
+            transform: `translateX(${thumbHorizontalX}px)`
+        };
+        const { scrollTop, clientHeight, scrollHeight } = values;
+        const trackVerticalHeight = getInnerHeight(this.trackVertical);
+        const thumbVerticalHeight = this.getThumbVerticalHeight();
+        const thumbVerticalY = scrollTop / (scrollHeight - clientHeight) * (trackVerticalHeight - thumbVerticalHeight);
+        const thumbVerticalStyle = {
+            height: thumbVerticalHeight,
+            transform: `translateY(${thumbVerticalY}px)`
+        };
+        if (hideTracksWhenNotNeeded) {
+            const trackHorizontalStyle = {
+                visibility: scrollWidth > clientWidth ? 'visible' : 'hidden'
             };
-            const { scrollTop, clientHeight, scrollHeight } = values;
-            const trackVerticalHeight = getInnerHeight(this.trackVertical);
-            const thumbVerticalHeight = this.getThumbVerticalHeight();
-            const thumbVerticalY = scrollTop / (scrollHeight - clientHeight) * (trackVerticalHeight - thumbVerticalHeight);
-            const thumbVerticalStyle = {
-                height: thumbVerticalHeight,
-                transform: `translateY(${thumbVerticalY}px)`
+            const trackVerticalStyle = {
+                visibility: scrollHeight > clientHeight ? 'visible' : 'hidden'
             };
-            if (hideTracksWhenNotNeeded) {
-                const trackHorizontalStyle = {
-                    visibility: scrollWidth > clientWidth ? 'visible' : 'hidden'
-                };
-                const trackVerticalStyle = {
-                    visibility: scrollHeight > clientHeight ? 'visible' : 'hidden'
-                };
-                css(this.trackHorizontal, trackHorizontalStyle);
-                css(this.trackVertical, trackVerticalStyle);
-            }
-            css(this.thumbHorizontal, thumbHorizontalStyle);
-            css(this.thumbVertical, thumbVerticalStyle);
+            css(this.trackHorizontal, trackHorizontalStyle);
+            css(this.trackVertical, trackVerticalStyle);
         }
+        css(this.thumbHorizontal, thumbHorizontalStyle);
+        css(this.thumbVertical, thumbVerticalStyle);
         if (onUpdate) onUpdate(values);
         if (typeof callback !== 'function') return;
         callback(values);
@@ -527,17 +550,17 @@ export default class Scrollbars extends Component {
         const viewStyle = {
             ...viewStyleDefault,
             // Hide scrollbars by setting a negative margin
-            marginRight: scrollbarWidth ? -scrollbarWidth : 0,
-            marginBottom: scrollbarWidth ? -scrollbarWidth : 0,
+            marginRight: -this.getPaddingWidth() + (scrollbarWidth ? -scrollbarWidth : 0),
+            marginBottom: -this.getPaddingHeight() + (scrollbarWidth ? -scrollbarWidth : 0),
             ...(autoHeight && {
                 ...viewStyleAutoHeight,
-                // Add scrollbarWidth to autoHeight in order to compensate negative margins
+                // Add paddingHeight and scrollbarWidth to autoHeight in order to compensate negative margins
                 minHeight: isString(autoHeightMin)
-                    ? `calc(${autoHeightMin} + ${scrollbarWidth}px)`
-                    : autoHeightMin + scrollbarWidth,
+                    ? `calc(${autoHeightMin} + ${this.getPaddingHeight() + scrollbarWidth}px)`
+                    : autoHeightMin + this.getPaddingHeight() + scrollbarWidth,
                 maxHeight: isString(autoHeightMax)
-                    ? `calc(${autoHeightMax} + ${scrollbarWidth}px)`
-                    : autoHeightMax + scrollbarWidth
+                    ? `calc(${autoHeightMax} + ${this.getPaddingHeight() + scrollbarWidth}px)`
+                    : autoHeightMax + this.getPaddingHeight() + scrollbarWidth
             }),
             // Override min/max height for initial universal rendering
             ...((autoHeight && universal && !didMountUniversal) && {
@@ -548,6 +571,18 @@ export default class Scrollbars extends Component {
             ...((universal && !didMountUniversal) && viewStyleUniversalInitial)
         };
 
+        const viewWrapperStyle = {
+            ...viewWrapperStyleDefault,
+            ...(autoHeight && {
+                ...viewWrapperStyleAutoHeight
+            }),
+        };
+
+        const viewWrappedStyle = {
+            ...viewWrappedStyleDefault
+        };
+
+
         const trackAutoHeightStyle = {
             transition: `opacity ${autoHideDuration}ms`,
             opacity: 0
@@ -556,7 +591,7 @@ export default class Scrollbars extends Component {
         const trackHorizontalStyle = {
             ...trackHorizontalStyleDefault,
             ...(autoHide && trackAutoHeightStyle),
-            ...((!scrollbarWidth || (universal && !didMountUniversal)) && {
+            ...((universal && !didMountUniversal) && {
                 display: 'none'
             })
         };
@@ -564,17 +599,21 @@ export default class Scrollbars extends Component {
         const trackVerticalStyle = {
             ...trackVerticalStyleDefault,
             ...(autoHide && trackAutoHeightStyle),
-            ...((!scrollbarWidth || (universal && !didMountUniversal)) && {
+            ...((universal && !didMountUniversal) && {
                 display: 'none'
             })
         };
 
-        return createElement(tagName, { ...props, style: containerStyle, ref: (ref) => { this.container = ref; } }, [
-            cloneElement(
-                renderView({ style: viewStyle }),
-                { key: 'view', ref: (ref) => { this.view = ref; } },
-                children
-            ),
+        return createElement(tagName, { className: props.className ? props.className : '', style: containerStyle, ref: (ref) => { this.container = ref; } }, [
+            createElement('div', { style: viewStyle, key: 'view', ref: (ref) => { this.view = ref; } }, [
+                createElement('div', { style: viewWrapperStyle, key: 'viewWrapper', ref: (ref) => { this.viewWrapper = ref; } }, [
+                    cloneElement(
+                        renderView({ style: viewWrappedStyle }),
+                        { key: 'viewWrapped', ref: (ref) => { this.viewWrapped = ref; } },
+                        children
+                    )
+                ])
+            ]),
             cloneElement(
                 renderTrackHorizontal({ style: trackHorizontalStyle }),
                 { key: 'trackHorizontal', ref: (ref) => { this.trackHorizontal = ref; } },

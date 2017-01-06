@@ -2,7 +2,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { render, unmountComponentAtNode } from 'react-dom';
 import React from 'react';
 
-export default function createTests(scrollbarWidth) {
+export default function createTests(scrollbarSize, scrollbarWidth) {
     let node;
     beforeEach(() => {
         node = document.createElement('div');
@@ -52,8 +52,8 @@ export default function createTests(scrollbarWidth) {
                         setTimeout(() => {
                             const { view } = this;
                             expect(view.style.overflow).toEqual('scroll');
-                            expect(view.style.marginBottom).toEqual(`${-scrollbarWidth}px`);
-                            expect(view.style.marginRight).toEqual(`${-scrollbarWidth}px`);
+                            expect(view.style.marginBottom).toEqual(`${-(scrollbarSize + scrollbarWidth)}px`);
+                            expect(view.style.marginRight).toEqual(`${-(scrollbarSize + scrollbarWidth)}px`);
                             done();
                         }, 100);
                     });
@@ -96,10 +96,10 @@ export default function createTests(scrollbarWidth) {
                         setTimeout(() => {
                             const { view } = this;
                             expect(view.style.overflow).toEqual('scroll');
-                            expect(view.style.marginBottom).toEqual(`${-scrollbarWidth}px`);
-                            expect(view.style.marginRight).toEqual(`${-scrollbarWidth}px`);
-                            expect(view.style.minHeight).toEqual(`${scrollbarWidth}px`);
-                            expect(view.style.maxHeight).toEqual(`${100 + scrollbarWidth}px`);
+                            expect(view.style.marginBottom).toEqual(`${-(scrollbarSize + scrollbarWidth)}px`);
+                            expect(view.style.marginRight).toEqual(`${-(scrollbarSize + scrollbarWidth)}px`);
+                            expect(view.style.minHeight).toEqual(`${scrollbarSize + scrollbarWidth}px`);
+                            expect(view.style.maxHeight).toEqual(`${100 + scrollbarSize + scrollbarWidth}px`);
                             done();
                         });
                     });
