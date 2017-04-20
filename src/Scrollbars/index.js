@@ -54,14 +54,10 @@ export default class Scrollbars extends Component {
       this.handleDragEnd = this.handleDragEnd.bind(this);
       this.pollScrollbarWidthTimer = this.pollScrollbarWidthTimer.bind(this);
 
-      this.state = this.getInitialState();
-    }
-
-    getInitialState() {
-        return {
-            didMountUniversal: false,
-            scrollbarWidth: getScrollbarWidth()
-        };
+      this.state = {
+	      didMountUniversal: false,
+	      scrollbarWidth: getScrollbarWidth()
+      };
     }
 
     componentDidMount() {
