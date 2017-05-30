@@ -11,7 +11,7 @@ export const containerStyleDefault = {
 export const viewWrapperStyleDefault = {
     paddingRight: scrollbarSize,
     paddingBottom: scrollbarSize,
-    width: 'auto',
+    width: '100%',
     minWidth: '100%',
     boxSizing: 'border-box',
     verticalAlign: 'top',
