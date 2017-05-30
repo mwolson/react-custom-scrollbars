@@ -2,7 +2,7 @@ import raf, { cancel as caf } from 'raf';
 import css from 'dom-css';
 import { createClass, createElement, PropTypes, cloneElement } from 'react';
 import isString from '../utils/isString';
-import getScrollbarWidth from '../utils/getScrollbarWidth';
+import { getScrollbarWidth, invalidateScrollbarWidth } from '../utils/getScrollbarWidth';
 import returnFalse from '../utils/returnFalse';
 import getInnerWidth from '../utils/getInnerWidth';
 import getInnerHeight from '../utils/getInnerHeight';
@@ -32,6 +32,8 @@ import {
     renderThumbHorizontalDefault,
     renderThumbVerticalDefault
 } from './defaultRenderElements';
+
+const POLL_SCROLLBAR_WIDTH_INTERVAL = 500;
 
 export default createClass({
 
@@ -91,7 +93,8 @@ export default createClass({
 
     getInitialState() {
         return {
-            didMountUniversal: false
+            didMountUniversal: false,
+            scrollbarWidth: getScrollbarWidth()
         };
     },
 
@@ -266,6 +269,7 @@ export default createClass({
         thumbHorizontal.addEventListener('mousedown', this.handleHorizontalThumbMouseDown);
         thumbVertical.addEventListener('mousedown', this.handleVerticalThumbMouseDown);
         window.addEventListener('resize', this.handleWindowResize);
+        this.pollScrollbarWidthTimer = setTimeout(this.pollScrollbarWidth, POLL_SCROLLBAR_WIDTH_INTERVAL);
     },
 
     removeListeners() {
@@ -282,8 +286,29 @@ export default createClass({
         thumbHorizontal.removeEventListener('mousedown', this.handleHorizontalThumbMouseDown);
         thumbVertical.removeEventListener('mousedown', this.handleVerticalThumbMouseDown);
         window.removeEventListener('resize', this.handleWindowResize);
+        if (this.pollScrollbarWidthTimer) clearTimeout(this.pollScrollbarWidthTimer);
         // Possibly setup by `handleDragStart`
         this.teardownDragging();
+    },
+
+    pollScrollbarWidth() {
+        if (this.detectScrollbarWidthChange()) {
+            this.update(() => {
+                this.pollScrollbarWidthTimer = setTimeout(this.pollScrollbarWidth, POLL_SCROLLBAR_WIDTH_INTERVAL);
+            })
+        } else {
+            this.pollScrollbarWidthTimer = setTimeout(this.pollScrollbarWidth, POLL_SCROLLBAR_WIDTH_INTERVAL);
+        }
+    },
+
+    detectScrollbarWidthChange() {
+        invalidateScrollbarWidth();
+        const scrollbarWidth = getScrollbarWidth();
+        const isChanged = scrollbarWidth !== this.state.scrollbarWidth;
+        if (isChanged) {
+            this.setState({ scrollbarWidth });
+        }
+        return isChanged;
     },
 
     handleScroll(event) {
@@ -323,6 +348,7 @@ export default createClass({
     },
 
     handleWindowResize() {
+        this.detectScrollbarWidthChange();
         this.update();
     },
 
@@ -529,7 +555,6 @@ export default createClass({
     },
 
     render() {
-        const scrollbarWidth = getScrollbarWidth();
         /* eslint-disable no-unused-vars */
         const {
             onScroll,
@@ -559,7 +584,7 @@ export default createClass({
         } = this.props;
         /* eslint-enable no-unused-vars */
 
-        const { didMountUniversal } = this.state;
+        const { didMountUniversal, scrollbarWidth } = this.state;
 
         const containerStyle = {
             ...containerStyleDefault,
@@ -576,6 +601,7 @@ export default createClass({
             // Hide scrollbars by setting a negative margin
             marginRight: -this.getPaddingWidth() + (scrollbarWidth ? -scrollbarWidth : 0),
             marginBottom: -this.getPaddingHeight() + (scrollbarWidth ? -scrollbarWidth : 0),
+            width: `calc(100% + ${scrollbarSize + scrollbarWidth}px)`,
             ...(autoHeight && {
                 ...viewStyleAutoHeight,
                 // Add paddingHeight and scrollbarWidth to autoHeight in order to compensate negative margins
