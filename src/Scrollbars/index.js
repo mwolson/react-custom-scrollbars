@@ -33,7 +33,7 @@ import {
     renderThumbVerticalDefault
 } from './defaultRenderElements';
 
-const POLL_SCROLLBAR_WIDTH_INTERVAL = 500;
+const POLL_SCROLLBAR_WIDTH_INTERVAL = 5000;
 
 export default createClass({
 
