@@ -293,7 +293,7 @@ export default createClass({
 
     pollScrollbarWidth() {
         if (this.detectScrollbarWidthChange()) {
-            this.update(() => {
+            this._update(() => {
                 this.pollScrollbarWidthTimer = setTimeout(this.pollScrollbarWidth, POLL_SCROLLBAR_WIDTH_INTERVAL);
             })
         } else {
