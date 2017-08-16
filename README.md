@@ -17,6 +17,17 @@ react-custom-scrollbars
 
 **[Demos](http://malte-wessel.github.io/react-custom-scrollbars/) · [Documentation](https://github.com/malte-wessel/react-custom-scrollbars/tree/master/docs)**
 
+## Changes in tt-react-custom-scrollbars fork
+
+* Show custom scrollbars and hide native scrollbars on browsers that don't have scrollbar width
+* Improve Safari compatibility
+* Redraw the scrollbar if its width changed due to unplugging a monitor
+* Backport several fixes to use ES6 classes and `prop-types` package
+
+Original project: https://github.com/malte-wessel/react-custom-scrollbars
+
+Some changes applied from https://github.com/danbrianwhite/react-custom-scrollbars/tree/apple-scrollbars
+
 ## Installation
 ```bash
 npm install react-custom-scrollbars --save

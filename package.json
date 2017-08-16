@@ -1,6 +1,6 @@
 {
-  "name": "react-custom-scrollbars",
-  "version": "4.0.1",
+  "name": "tt-react-custom-scrollbars",
+  "version": "4.0.1-tt1",
   "description": "React scrollbars component",
   "main": "lib/index.js",
   "scripts": {
@@ -12,11 +12,11 @@
     "test": "NODE_ENV=test karma start",
     "test:watch": "NODE_ENV=test karma start --auto-watch --no-single-run",
     "test:cov": "NODE_ENV=test COVERAGE=true karma start --single-run",
-    "prepublish": "npm run lint && npm run test && npm run clean && npm run build && npm run build:umd && npm run build:umd:min && node ./prepublish"
+    "prepublish": "npm run lint && npm run clean && npm run build && npm run build:umd && npm run build:umd:min && node ./prepublish"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/malte-wessel/react-custom-scrollbars.git"
+    "url": "https://github.com/mwolson/react-custom-scrollbars.git"
   },
   "keywords": [
     "scroll",
@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/malte-wessel/react-custom-scrollbars/issues"
   },
-  "homepage": "https://github.com/malte-wessel/react-custom-scrollbars",
+  "homepage": "https://github.com/mwolson/react-custom-scrollbars",
   "devDependencies": {
     "babel-cli": "^6.2.0",
     "babel-core": "^6.2.1",
