@@ -21,7 +21,7 @@ export default function createTests() {
                 </Scrollbars>
             ), node, function callback() {
                 setTimeout(() => {
-                    const { view, thumbHorizontal: thumb } = this.refs;
+                    const { view, thumbHorizontal: thumb } = this;
                     const { left } = thumb.getBoundingClientRect();
                     simulant.fire(thumb, 'mousedown', {
                         target: thumb,
@@ -44,7 +44,7 @@ export default function createTests() {
                 </Scrollbars>
             ), node, function callback() {
                 setTimeout(() => {
-                    const { thumbHorizontal: thumb } = this.refs;
+                    const { thumbHorizontal: thumb } = this;
                     const { left } = thumb.getBoundingClientRect();
                     simulant.fire(thumb, 'mousedown', {
                         target: thumb,
@@ -67,7 +67,7 @@ export default function createTests() {
                 </Scrollbars>
             ), node, function callback() {
                 setTimeout(() => {
-                    const { view, thumbVertical: thumb } = this.refs;
+                    const { view, thumbVertical: thumb } = this;
                     const { top } = thumb.getBoundingClientRect();
                     simulant.fire(thumb, 'mousedown', {
                         target: thumb,
@@ -90,7 +90,7 @@ export default function createTests() {
                 </Scrollbars>
             ), node, function callback() {
                 setTimeout(() => {
-                    const { thumbVertical: thumb } = this.refs;
+                    const { thumbVertical: thumb } = this;
                     const { top } = thumb.getBoundingClientRect();
                     simulant.fire(thumb, 'mousedown', {
                         target: thumb,

@@ -22,7 +22,7 @@ export default function createTests() {
                 </Scrollbars>
             ), node, function callback() {
                 setTimeout(() => {
-                    const { view, trackHorizontal: bar } = this.refs;
+                    const { view, trackHorizontal: bar } = this;
                     const { left, width } = bar.getBoundingClientRect();
                     simulant.fire(bar, 'mousedown', {
                         target: bar,
@@ -43,7 +43,7 @@ export default function createTests() {
                 </Scrollbars>
             ), node, function callback() {
                 setTimeout(() => {
-                    const { view, trackVertical: bar } = this.refs;
+                    const { view, trackVertical: bar } = this;
                     const { top, height } = bar.getBoundingClientRect();
                     simulant.fire(bar, 'mousedown', {
                         target: bar,

@@ -25,7 +25,7 @@ export default function createTests() {
                         </Scrollbars>
                     ), node, function callback() {
                         setTimeout(() => {
-                            const { trackHorizontal, trackVertical } = this.refs;
+                            const { trackHorizontal, trackVertical } = this;
                             expect(trackHorizontal.style.visibility).toEqual('visible');
                             expect(trackVertical.style.visibility).toEqual('visible');
                             done();
@@ -43,7 +43,7 @@ export default function createTests() {
                         </Scrollbars>
                     ), node, function callback() {
                         setTimeout(() => {
-                            const { trackHorizontal, trackVertical } = this.refs;
+                            const { trackHorizontal, trackVertical } = this;
                             expect(trackHorizontal.style.visibility).toEqual('hidden');
                             expect(trackVertical.style.visibility).toEqual('hidden');
                             done();

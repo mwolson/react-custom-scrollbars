@@ -25,8 +25,8 @@ export default function createTests() {
                     this.scrollLeft(50);
                     setTimeout(() => {
                         // 50 / (200 - 100) * (96 - 48) = 24
-                        expect(this.refs.thumbVertical.style.transform).toEqual('translateY(24px)');
-                        expect(this.refs.thumbHorizontal.style.transform).toEqual('translateX(24px)');
+                        expect(this.thumbVertical.style.transform).toEqual('translateY(24px)');
+                        expect(this.thumbHorizontal.style.transform).toEqual('translateX(24px)');
                         done();
                     }, 100);
                 });

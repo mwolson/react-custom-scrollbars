@@ -45,7 +45,7 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                         <div style={{ width: 200, height: 200 }}/>
                     </Scrollbars>
                 ), node, function callback() {
-                    expect(this.refs.view).toBeA(Node);
+                    expect(this.view).toBeA(Node);
                     done();
                 });
             });
@@ -87,18 +87,18 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                         </Scrollbars>
                     ), node, function callback() {
                         const width = `${scrollbarSize}px`;
-                        expect(this.refs.viewWrapped.tagName).toEqual('SECTION');
-                        expect(this.refs.viewWrapped.style.color).toEqual('red');
-                        expect(this.refs.viewWrapped.style.position).toEqual('relative');
-                        expect(this.refs.viewWrapped.style.display).toEqual('block');
-                        expect(this.refs.viewWrapped.style.width).toEqual('100%');
-                        expect(this.refs.viewWrapped.style.boxSizing).toEqual('border-box');
-                        expect(this.refs.viewWrapper.style.paddingRight).toEqual(width);
-                        expect(this.refs.viewWrapper.style.paddingBottom).toEqual(width);
-                        expect(this.refs.viewWrapper.style.display).toEqual('inline-block');
-                        expect(this.refs.viewWrapper.style.width).toEqual('auto');
-                        expect(this.refs.viewWrapper.style.minWidth).toEqual('100%');
-                        expect(this.refs.viewWrapper.style.boxSizing).toEqual('border-box');
+                        expect(this.viewWrapped.tagName).toEqual('SECTION');
+                        expect(this.viewWrapped.style.color).toEqual('red');
+                        expect(this.viewWrapped.style.position).toEqual('relative');
+                        expect(this.viewWrapped.style.display).toEqual('block');
+                        expect(this.viewWrapped.style.width).toEqual('100%');
+                        expect(this.viewWrapped.style.boxSizing).toEqual('border-box');
+                        expect(this.viewWrapper.style.paddingRight).toEqual(width);
+                        expect(this.viewWrapper.style.paddingBottom).toEqual(width);
+                        expect(this.viewWrapper.style.display).toEqual('inline-block');
+                        expect(this.viewWrapper.style.width).toEqual('auto');
+                        expect(this.viewWrapper.style.minWidth).toEqual('100%');
+                        expect(this.viewWrapper.style.boxSizing).toEqual('border-box');
                         done();
                     });
                 });
@@ -112,8 +112,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                         </Scrollbars>
                     ), node, function callback() {
                         const width = `-${scrollbarSize + scrollbarWidth}px`;
-                        expect(this.refs.view.style.marginRight).toEqual(width);
-                        expect(this.refs.view.style.marginBottom).toEqual(width);
+                        expect(this.view.style.marginRight).toEqual(width);
+                        expect(this.view.style.marginBottom).toEqual(width);
                         done();
                     });
                 });
@@ -124,8 +124,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                             <div style={{ width: 200, height: 200 }}/>
                         </Scrollbars>
                     ), node, function callback() {
-                        expect(this.refs.trackHorizontal).toBeA(Node);
-                        expect(this.refs.trackVertical).toBeA(Node);
+                        expect(this.trackHorizontal).toBeA(Node);
+                        expect(this.trackVertical).toBeA(Node);
                         done();
                     });
                 });
@@ -136,8 +136,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                             <div style={{ width: 200, height: 200 }}/>
                         </Scrollbars>
                     ), node, function callback() {
-                        expect(this.refs.thumbHorizontal).toBeA(Node);
-                        expect(this.refs.thumbVertical).toBeA(Node);
+                        expect(this.thumbHorizontal).toBeA(Node);
+                        expect(this.thumbVertical).toBeA(Node);
                         done();
                     });
                 });
@@ -150,8 +150,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                     ), node, function callback() {
                         setTimeout(() => {
                             // 100 / 200 * 96 = 48
-                            expect(this.refs.thumbVertical.style.height).toEqual('48px');
-                            expect(this.refs.thumbHorizontal.style.width).toEqual('48px');
+                            expect(this.thumbVertical.style.height).toEqual('48px');
+                            expect(this.thumbHorizontal.style.width).toEqual('48px');
                             done();
                         }, 100);
                     });
@@ -165,8 +165,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                     ), node, function callback() {
                         setTimeout(() => {
                             // 100 / 200 * 96 = 48
-                            expect(this.refs.thumbVertical.style.height).toEqual('30px');
-                            expect(this.refs.thumbHorizontal.style.width).toEqual('30px');
+                            expect(this.thumbVertical.style.height).toEqual('30px');
+                            expect(this.thumbHorizontal.style.width).toEqual('30px');
                             done();
                         }, 100);
                     });
@@ -181,8 +181,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                         ), node, function callback() {
                             setTimeout(() => {
                                 // 100 / 200 * 96 = 48
-                                expect(this.refs.thumbVertical.style.height).toEqual('50px');
-                                expect(this.refs.thumbHorizontal.style.width).toEqual('50px');
+                                expect(this.thumbVertical.style.height).toEqual('50px');
+                                expect(this.thumbHorizontal.style.width).toEqual('50px');
                                 done();
                             }, 100);
                         });
@@ -198,9 +198,9 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                                 <div style={{ width: 200, height: 200 }}/>
                             </Scrollbars>
                         ), node, function callback() {
-                            expect(this.refs.trackHorizontal.tagName).toEqual('SECTION');
-                            expect(this.refs.trackHorizontal.style.position).toEqual('absolute');
-                            expect(this.refs.trackHorizontal.style.color).toEqual('red');
+                            expect(this.trackHorizontal.tagName).toEqual('SECTION');
+                            expect(this.trackHorizontal.style.position).toEqual('absolute');
+                            expect(this.trackHorizontal.style.color).toEqual('red');
                             done();
                         });
                     });
@@ -215,9 +215,9 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                                 <div style={{ width: 200, height: 200 }}/>
                             </Scrollbars>
                         ), node, function callback() {
-                            expect(this.refs.trackVertical.tagName).toEqual('SECTION');
-                            expect(this.refs.trackVertical.style.position).toEqual('absolute');
-                            expect(this.refs.trackVertical.style.color).toEqual('red');
+                            expect(this.trackVertical.tagName).toEqual('SECTION');
+                            expect(this.trackVertical.style.position).toEqual('absolute');
+                            expect(this.trackVertical.style.color).toEqual('red');
                             done();
                         });
                     });
@@ -232,9 +232,9 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                                 <div style={{ width: 200, height: 200 }}/>
                             </Scrollbars>
                         ), node, function callback() {
-                            expect(this.refs.thumbHorizontal.tagName).toEqual('SECTION');
-                            expect(this.refs.thumbHorizontal.style.position).toEqual('relative');
-                            expect(this.refs.thumbHorizontal.style.color).toEqual('red');
+                            expect(this.thumbHorizontal.tagName).toEqual('SECTION');
+                            expect(this.thumbHorizontal.style.position).toEqual('relative');
+                            expect(this.thumbHorizontal.style.color).toEqual('red');
                             done();
                         });
                     });
@@ -249,9 +249,9 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                                 <div style={{ width: 200, height: 200 }}/>
                             </Scrollbars>
                         ), node, function callback() {
-                            expect(this.refs.thumbVertical.tagName).toEqual('SECTION');
-                            expect(this.refs.thumbVertical.style.position).toEqual('relative');
-                            expect(this.refs.thumbVertical.style.color).toEqual('red');
+                            expect(this.thumbVertical.tagName).toEqual('SECTION');
+                            expect(this.thumbVertical.style.position).toEqual('relative');
+                            expect(this.thumbVertical.style.color).toEqual('red');
                             done();
                         });
                     });
@@ -263,9 +263,9 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                             <div style={{ width: 200, height: 200 }}/>
                         </Scrollbars>
                     ), node, function callback() {
-                        expect(this.refs.view.style.position).toEqual('absolute');
-                        expect(this.refs.view.style.top).toEqual('0px');
-                        expect(this.refs.view.style.left).toEqual('0px');
+                        expect(this.view.style.position).toEqual('absolute');
+                        expect(this.view.style.top).toEqual('0px');
+                        expect(this.view.style.left).toEqual('0px');
                         done();
                     });
                 });
@@ -282,8 +282,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                         </Scrollbars>
                     ), node, function callback() {
                         setTimeout(() => {
-                            expect(this.refs.trackHorizontal.style.height).toEqual('10px');
-                            expect(this.refs.trackVertical.style.width).toEqual('10px');
+                            expect(this.trackHorizontal.style.height).toEqual('10px');
+                            expect(this.trackVertical.style.width).toEqual('10px');
                             done();
                         }, 100);
                     });
@@ -302,8 +302,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                             </Scrollbars>
                         ), node, function callback() {
                             setTimeout(() => {
-                                expect(this.refs.thumbHorizontal.style.width).toEqual('0px');
-                                expect(this.refs.thumbVertical.style.height).toEqual('0px');
+                                expect(this.thumbHorizontal.style.width).toEqual('0px');
+                                expect(this.thumbVertical.style.height).toEqual('0px');
                                 done();
                             }, 100);
                         });
@@ -319,8 +319,8 @@ export default function createTests(scrollbarSize, scrollbarWidth) {
                         </Scrollbars>
                     ), node, function callback() {
                         setTimeout(() => {
-                            expect(this.refs.trackVertical.style.display).toEqual('');
-                            expect(this.refs.trackHorizontal.style.display).toEqual('');
+                            expect(this.trackVertical.style.display).toEqual('');
+                            expect(this.trackHorizontal.style.display).toEqual('');
                             done();
                         }, 100);
                     });
