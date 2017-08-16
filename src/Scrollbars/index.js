@@ -4,7 +4,7 @@ import { Component, createElement, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 
 import isString from '../utils/isString';
-import getScrollbarWidth from '../utils/getScrollbarWidth';
+import { getScrollbarWidth, invalidateScrollbarWidth } from '../utils/getScrollbarWidth';
 import returnFalse from '../utils/returnFalse';
 import getInnerWidth from '../utils/getInnerWidth';
 import getInnerHeight from '../utils/getInnerHeight';
@@ -35,6 +35,8 @@ import {
     renderThumbVerticalDefault
 } from './defaultRenderElements';
 
+const POLL_SCROLLBAR_WIDTH_INTERVAL = 3000;
+
 export default class Scrollbars extends Component {
 
     constructor(props, ...rest) {
@@ -46,6 +48,8 @@ export default class Scrollbars extends Component {
         this.getScrollHeight = this.getScrollHeight.bind(this);
         this.getClientWidth = this.getClientWidth.bind(this);
         this.getClientHeight = this.getClientHeight.bind(this);
+        this.getPaddingWidth = this.getPaddingWidth.bind(this);
+        this.getPaddingHeight = this.getPaddingHeight.bind(this);
         this.getValues = this.getValues.bind(this);
         this.getThumbHorizontalWidth = this.getThumbHorizontalWidth.bind(this);
         this.getThumbVerticalHeight = this.getThumbVerticalHeight.bind(this);
@@ -69,9 +73,11 @@ export default class Scrollbars extends Component {
         this.handleScroll = this.handleScroll.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragEnd = this.handleDragEnd.bind(this);
+        this.pollScrollbarWidth = this.pollScrollbarWidth.bind(this);
 
         this.state = {
-            didMountUniversal: false
+            didMountUniversal: false,
+            scrollbarWidth: 17
         };
     }
 
@@ -130,14 +136,15 @@ export default class Scrollbars extends Component {
 
     getPaddingWidth() {
         return scrollbarSize;
-    },
+    }
 
     getPaddingHeight() {
         return scrollbarSize;
-    },
+    }
 
     getValues() {
         const {
+            offsetWidth = 0,
             scrollLeft = 0,
             scrollTop = 0,
             scrollWidth: realScrollWidth = 0,
@@ -154,6 +161,9 @@ export default class Scrollbars extends Component {
         return {
             left: (scrollLeft / (scrollWidth - clientWidth)) || 0,
             top: (scrollTop / (scrollHeight - clientHeight)) || 0,
+            offsetWidth,
+            realClientWidth,
+            realClientHeight,
             scrollLeft,
             scrollTop,
             scrollWidth,
@@ -249,6 +259,7 @@ export default class Scrollbars extends Component {
         thumbHorizontal.addEventListener('mousedown', this.handleHorizontalThumbMouseDown);
         thumbVertical.addEventListener('mousedown', this.handleVerticalThumbMouseDown);
         window.addEventListener('resize', this.handleWindowResize);
+        this.pollScrollbarWidthTimer = setTimeout(this.pollScrollbarWidth, POLL_SCROLLBAR_WIDTH_INTERVAL);
     }
 
     removeListeners() {
@@ -265,8 +276,42 @@ export default class Scrollbars extends Component {
         thumbHorizontal.removeEventListener('mousedown', this.handleHorizontalThumbMouseDown);
         thumbVertical.removeEventListener('mousedown', this.handleVerticalThumbMouseDown);
         window.removeEventListener('resize', this.handleWindowResize);
+        if (this.pollScrollbarWidthTimer) clearTimeout(this.pollScrollbarWidthTimer);
         // Possibly setup by `handleDragStart`
         this.teardownDragging();
+    }
+
+    pollScrollbarWidth() {
+        this.raf(() => {
+            if (this.detectScrollbarWidthChange(this.getValues())) {
+                this._update(() => {
+                    this.pollScrollbarWidthTimer = setTimeout(this.pollScrollbarWidth, POLL_SCROLLBAR_WIDTH_INTERVAL);
+                });
+            } else {
+                this.pollScrollbarWidthTimer = setTimeout(this.pollScrollbarWidth, POLL_SCROLLBAR_WIDTH_INTERVAL);
+            }
+        });
+    }
+
+    detectScrollbarWidthChange(values) {
+        const { scrollLeft, scrollTop } = values;
+        invalidateScrollbarWidth();
+        const scrollbarWidth = getScrollbarWidth(values);
+        const isChanged = scrollbarWidth !== this.state.scrollbarWidth;
+        if (isChanged) {
+            this.setState({ scrollbarWidth }, () => {
+                const { clientHeight, scrollHeight } = this.getValues();
+                const nearBottom = Math.abs((scrollHeight - clientHeight) - scrollTop) <= scrollbarWidth;
+
+                this.scrollLeft(scrollLeft);
+                if (nearBottom) {
+                    this.scrollTop(scrollHeight - clientHeight);
+                } else {
+                    this.scrollTop(scrollTop);
+                }
+            });
+        }
+        return isChanged;
     }
 
     handleScroll(event) {
@@ -463,7 +508,13 @@ export default class Scrollbars extends Component {
     }
 
     update(callback) {
-        this.raf(() => this._update(callback));
+        this.raf(() => {
+            this._update(values => {
+                this.detectScrollbarWidthChange(values);
+                if (typeof callback !== 'function') return;
+                callback(values);
+            });
+        });
     }
 
     _update(callback) {
@@ -505,7 +556,6 @@ export default class Scrollbars extends Component {
     }
 
     render() {
-        const scrollbarWidth = getScrollbarWidth();
         /* eslint-disable no-unused-vars */
         const {
             onScroll,
@@ -535,7 +585,7 @@ export default class Scrollbars extends Component {
         } = this.props;
         /* eslint-enable no-unused-vars */
 
-        const { didMountUniversal } = this.state;
+        const { didMountUniversal, scrollbarWidth } = this.state;
 
         const containerStyle = {
             ...containerStyleDefault,
@@ -552,6 +602,7 @@ export default class Scrollbars extends Component {
             // Hide scrollbars by setting a negative margin
             marginRight: -this.getPaddingWidth() + (scrollbarWidth ? -scrollbarWidth : 0),
             marginBottom: -this.getPaddingHeight() + (scrollbarWidth ? -scrollbarWidth : 0),
+            width: `calc(100% + ${scrollbarSize + scrollbarWidth}px)`,
             ...(autoHeight && {
                 ...viewStyleAutoHeight,
                 // Add paddingHeight and scrollbarWidth to autoHeight in order to compensate negative margins

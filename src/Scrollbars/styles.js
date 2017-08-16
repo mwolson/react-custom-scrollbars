@@ -38,9 +38,9 @@ export const viewStyleDefault = {
     right: 0,
     bottom: 0,
     overflow: 'scroll',
+    MsOverflowStyle: 'scrollbar',
     WebkitOverflowScrolling: 'touch',
     height: 'auto',
-    width: 'auto',
     boxSizing: 'content-box'
 };
 
