@@ -42,6 +42,27 @@ export default class Scrollbars extends Component {
     constructor(props, ...rest) {
         super(props, ...rest);
 
+        this.getScrollLeft = this.getScrollLeft.bind(this);
+        this.getScrollTop = this.getScrollTop.bind(this);
+        this.getScrollWidth = this.getScrollWidth.bind(this);
+        this.getScrollHeight = this.getScrollHeight.bind(this);
+        this.getClientWidth = this.getClientWidth.bind(this);
+        this.getClientHeight = this.getClientHeight.bind(this);
+        this.getPaddingWidth = this.getPaddingWidth.bind(this);
+        this.getPaddingHeight = this.getPaddingHeight.bind(this);
+        this.getValues = this.getValues.bind(this);
+        this.getThumbHorizontalWidth = this.getThumbHorizontalWidth.bind(this);
+        this.getThumbVerticalHeight = this.getThumbVerticalHeight.bind(this);
+        this.getScrollLeftForOffset = this.getScrollLeftForOffset.bind(this);
+        this.getScrollTopForOffset = this.getScrollTopForOffset.bind(this);
+
+        this.scrollLeft = this.scrollLeft.bind(this);
+        this.scrollTop = this.scrollTop.bind(this);
+        this.scrollToLeft = this.scrollToLeft.bind(this);
+        this.scrollToTop = this.scrollToTop.bind(this);
+        this.scrollToRight = this.scrollToRight.bind(this);
+        this.scrollToBottom = this.scrollToBottom.bind(this);
+
         this.handleTrackMouseEnter = this.handleTrackMouseEnter.bind(this);
         this.handleTrackMouseLeave = this.handleTrackMouseLeave.bind(this);
         this.handleHorizontalTrackMouseDown = this.handleHorizontalTrackMouseDown.bind(this);
@@ -52,7 +73,8 @@ export default class Scrollbars extends Component {
         this.handleScroll = this.handleScroll.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragEnd = this.handleDragEnd.bind(this);
-        this.pollScrollbarWidthTimer = this.pollScrollbarWidthTimer.bind(this);
+        this.detectScrollbarWidthChange = this.detectScrollbarWidthChange.bind(this);
+        this.pollScrollbarWidth = this.pollScrollbarWidth.bind(this);
 
         this.state = {
             didMountUniversal: false,
