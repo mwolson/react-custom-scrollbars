@@ -521,6 +521,10 @@ export default class Scrollbars extends Component {
         const { onUpdate, hideTracksWhenNotNeeded } = this.props;
         this.container.scrollTop = 0;
         this.container.scrollLeft = 0;
+        if (!this.view) {
+            if (typeof callback === 'function') callback();
+            return;
+        }
         const values = this.getValues();
         const { scrollLeft, clientWidth, scrollWidth } = values;
         const trackHorizontalWidth = getInnerWidth(this.trackHorizontal);
