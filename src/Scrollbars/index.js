@@ -138,6 +138,7 @@ export default class Scrollbars extends Component {
     }
 
     getValues() {
+        if (!this.view) return null;
         const {
             scrollLeft,
             scrollTop
