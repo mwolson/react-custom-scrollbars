@@ -244,15 +244,19 @@ export default class Scrollbars extends Component {
         /* istanbul ignore if */
         if (typeof document === 'undefined') return;
         const { view, trackHorizontal, trackVertical, thumbHorizontal, thumbVertical } = this;
-        view.removeEventListener('scroll', this.handleScroll);
-        trackHorizontal.removeEventListener('mouseenter', this.handleTrackMouseEnter);
-        trackHorizontal.removeEventListener('mouseleave', this.handleTrackMouseLeave);
-        trackHorizontal.removeEventListener('mousedown', this.handleHorizontalTrackMouseDown);
-        trackVertical.removeEventListener('mouseenter', this.handleTrackMouseEnter);
-        trackVertical.removeEventListener('mouseleave', this.handleTrackMouseLeave);
-        trackVertical.removeEventListener('mousedown', this.handleVerticalTrackMouseDown);
-        thumbHorizontal.removeEventListener('mousedown', this.handleHorizontalThumbMouseDown);
-        thumbVertical.removeEventListener('mousedown', this.handleVerticalThumbMouseDown);
+        if (view) view.removeEventListener('scroll', this.handleScroll);
+        if (trackHorizontal) {
+            trackHorizontal.removeEventListener('mouseenter', this.handleTrackMouseEnter);
+            trackHorizontal.removeEventListener('mouseleave', this.handleTrackMouseLeave);
+            trackHorizontal.removeEventListener('mousedown', this.handleHorizontalTrackMouseDown);
+        }
+        if (trackVertical) {
+            trackVertical.removeEventListener('mouseenter', this.handleTrackMouseEnter);
+            trackVertical.removeEventListener('mouseleave', this.handleTrackMouseLeave);
+            trackVertical.removeEventListener('mousedown', this.handleVerticalTrackMouseDown);
+        }
+        if (thumbHorizontal) thumbHorizontal.removeEventListener('mousedown', this.handleHorizontalThumbMouseDown);
+        if (thumbVertical) thumbVertical.removeEventListener('mousedown', this.handleVerticalThumbMouseDown);
         window.removeEventListener('resize', this.handleWindowResize);
         if (this.pollScrollbarWidthTimer) clearTimeout(this.pollScrollbarWidthTimer);
         // Possibly setup by `handleDragStart`
