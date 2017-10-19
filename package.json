@@ -1,6 +1,6 @@
 {
   "name": "tt-react-custom-scrollbars",
-  "version": "4.0.1-tt5",
+  "version": "4.0.1-tt6",
   "description": "React scrollbars component",
   "main": "lib/index.js",
   "scripts": {
