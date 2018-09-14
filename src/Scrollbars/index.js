@@ -302,7 +302,8 @@ export default class Scrollbars extends Component {
         const { scrollLeft, scrollTop } = values;
         invalidateScrollbarWidth();
         const scrollbarWidth = getScrollbarWidth(values);
-        const isChanged = scrollbarWidth !== this.state.scrollbarWidth;
+        const isChanged = scrollbarWidth !== this.state.scrollbarWidth &&
+            scrollbarWidth !== (this.state.scrollbarWidth + 1);
         if (isChanged) {
             this.setState({ scrollbarWidth }, () => {
                 const { clientHeight, scrollHeight } = this.getValues();
